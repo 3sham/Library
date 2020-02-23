@@ -3,9 +3,6 @@
 @{
     ViewBag.Title = "Index";
 }
-
-
-
 <div id="NewPub" class="IndxBook ">
     @using (Ajax.BeginForm("Create", new AjaxOptions()
     {
@@ -75,16 +72,27 @@
 
 
                     @Html.ActionLink("Details", "Details", new { id = item.Pub_Id }) |
-                    @Ajax.ActionLink("Delete", "DeletePub", new { id = item.Pub_Id },new AjaxOptions() {
+                    @Ajax.ActionLink("Delete", "DeletePub", new { id = item.Pub_Id  },new AjaxOptions() {
 
-                       UpdateTargetId="NewPub",
-                       HttpMethod="Get",
-                       InsertionMode=InsertionMode.Replace
+                   UpdateTargetId="NewPub",
+                   HttpMethod="Get",
+                   InsertionMode=InsertionMode.Replace
 
-                     })
+               } , new { onclick = "return confirmDelete()" })
                 </td>
             </tr>
         }
 
     </table>
 </div>
+<script>
+    function confirmDelete() {
+        if (confirm("Delete Record?") == true) {
+            alert("Now deleting");
+            return true;
+        } else {
+            alert("Cancelled by user");
+            return false;
+        }
+    }
+</script>

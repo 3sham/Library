@@ -26,6 +26,12 @@ namespace Library.Models
         public DbSet<Member> member { get; set; }
         public DbSet<Locations> location { get; set; }
         public DbSet<Borrows> borrow { get; set; }
+
+        //protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<Borrows>().MapToStoredProcedures();
+        //    base.OnModelCreating(modelBuilder);
+        //}
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {

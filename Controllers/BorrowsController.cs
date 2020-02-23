@@ -14,13 +14,62 @@ namespace Library.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+
         // GET: Borrows
         public ActionResult Index()
         {
             var borrow = db.borrow.Include(b => b.Book).Include(b => b.Member);
             return View(borrow.ToList());
         }
+        [HttpPost]
+        public ActionResult Search(string searchparam, string searchTerm)
+        {
+            if (searchparam == "MemberName")
+            {
+                var s = db.borrow.Include(b => b.Book).Include(b => b.Member).Where(b => b.Member.Name.StartsWith(searchTerm));
 
+                return PartialView("_SearchBorrows",s.ToList());
+            }
+            else if (searchparam == "BookName")
+            {
+                var s = db.borrow.Include(b => b.Book).Include(b => b.Member).Where(b => b.Book.Title.StartsWith(searchTerm));
+                return PartialView("_SearchBorrows", s.ToList());
+            }
+            else
+            {
+               
+                return View();
+            }
+
+        }
+        public ActionResult AddMultiBorrows()
+        {
+
+            ViewBag.Book_id = new SelectList(db.Book, "Book_ID", "Title");
+            ViewBag.Memb_ID = new SelectList(db.member, "Memb_ID", "Name");
+            return View();
+        }
+        [HttpPost]
+        public JsonResult AddMultiBorrows(List<Borrows> borrow)
+        {
+            
+                //Check for NULL.
+                if (borrow == null)
+                {
+                    borrow = new List<Borrows>();
+                }
+
+                //Loop and insert records.
+                foreach (var model in borrow)
+                {
+                    model.Return_date = model.Due_date.AddDays(15);
+                    db.borrow.Add(model);
+                }
+                db.SaveChanges();
+               return Json(new { result = "Redirect", url = Url.Action("Index", "Borrows") });
+            
+
+        }
         // GET: Borrows/Details/5
         public ActionResult Details(Guid? id)
         {
@@ -121,6 +170,7 @@ namespace Library.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(Guid id)
         {
+           
             Borrows borrows = db.borrow.Find(id);
             db.borrow.Remove(borrows);
             db.SaveChanges();

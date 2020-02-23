@@ -62,7 +62,7 @@ namespace Library.Controllers
                     break;
             }
 
-            int pageSize = 5;
+            int pageSize = 20;
             int pageNumber = (page ?? 1);
             ViewBag.SearchString = new SelectList(db.member, "Name", "Name");
             return View(member.ToPagedList(pageNumber, pageSize));
